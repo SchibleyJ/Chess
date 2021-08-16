@@ -49,7 +49,7 @@ wss.on('connection', (client) => {
     client.on('close', () => {
         //console.log(client.userData.color);
 
-
+//i swear to got i am going to fucking kill myself soon
 
         //console.log(userData)
         console.log('closed');

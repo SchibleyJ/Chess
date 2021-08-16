@@ -86,9 +86,17 @@ ws.onmessage = (e) => {
 
 const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
     console.log(names);
-    if (names.whitePlayer) document.getElementById('userName1').innerHTML = names?.whitePlayer;
-    if (names.blackPlayer) document.getElementById('userName2').innerHTML = names?.blackPlayer;
+    if (names.whitePlayer) {
 
+        document.getElementById('userName1').innerHTML = names?.whitePlayer;
+    } else {
+        document.getElementById('userName1').innerHTML = "Player 1";
+    }
+    if (names.blackPlayer) {
+        document.getElementById('userName2').innerHTML = names?.blackPlayer;
+    } else {
+        document.getElementById('userName2').innerHTML = "Player 2";
+    }
 
     document.getElementById("infoP").innerHTML = gameResult.length ? gameResult : (whiteTurn ? "White's turn" : "Black's turn");
 
@@ -102,19 +110,19 @@ const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
             ctx.fillRect(j - (i % 200), i, 100, 100);
         }
 
-//last move squares
-if (lastMove && lastMove.length) {
-    for (let k = 0; k < 2; k++) {
-        if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
-            ctx.fillStyle = '#709090';
-            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
-        } else {
-            ctx.fillStyle ='#9aadad';
-            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+        //last move squares
+        if (lastMove && lastMove.length) {
+            for (let k = 0; k < 2; k++) {
+                if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+                    ctx.fillStyle = '#709090';
+                    ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+                } else {
+                    ctx.fillStyle = '#9aadad';
+                    ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+                }
+            }
         }
-    }
-}
-//
+        //
 
         ctx.fillStyle = 'black';
         ctx.fillText("" + (9 - (i / 100 + 1)), 5, i + 25);
@@ -155,19 +163,19 @@ const updateBoard = (board, whiteTurn, gameResult, updateSquares, lastMove) => {
             ctx.fillRect(updateSquares[i][0] * 100, updateSquares[i][1] * 100, 100, 100)
         }
 
-//last move squares
-if (lastMove && lastMove.length) {
-    for (let k = 0; k < 2; k++) {
-        if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
-            ctx.fillStyle = '#709090';
-            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
-        } else {
-            ctx.fillStyle ='#9aadad';
-            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+        //last move squares
+        if (lastMove && lastMove.length) {
+            for (let k = 0; k < 2; k++) {
+                if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+                    ctx.fillStyle = '#709090';
+                    ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+                } else {
+                    ctx.fillStyle = '#9aadad';
+                    ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+                }
+            }
         }
-    }
-}
-//
+        //
 
         ctx.fillStyle = 'black';
         if (updateSquares[i][0] == 0) {

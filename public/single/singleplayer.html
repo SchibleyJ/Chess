@@ -1,0 +1,59 @@
+<html>
+<link rel='stylesheet' type='text/css' href='singleplayer.css'>
+
+<body>
+    <div id="parent" class="parent">
+        <div class="div1">
+            <canvas id="gameCanvas" class="board" width="800" height="800"
+                oncontextmenu="event.preventDefault();"></canvas>
+        </div>
+
+        <div class="div2">
+            <div class="userInfo">
+                <div id="userName2" class="userName2">User 2</div>
+                <canvas id="player2captures" class="captures2" width="400" height="50"
+                    oncontextmenu="event.preventDefault();"></canvas>
+
+            </div>
+        </div>
+        <div class="div3">
+            <div class="userInfo">
+                <div id="userName1" class="userName1">User 1</div>
+                <canvas id="player1captures" class="captures1" width="400" height="50"
+                    oncontextmenu="event.preventDefault();"></canvas>
+            </div>
+        </div>
+        <div class="div4">
+
+        </div>
+        <div class="div5">
+
+            <div class="gameInfo">
+                <div id="infoP" class="info"></div>
+                <div id="clock2" class="clock">Black Clock
+                </div>
+                <div id="clock1" class="clock">White Clock</div>
+                <div class="endGame">
+                    <button onclick="resetGame()" class="resign">
+                        Reset
+                    </button>
+                </div>
+
+            </div>
+        </div>
+        <div class="div6">
+            <div >
+                <a href="/">
+                <img class="homeButton" src="img/home.png"></img>
+            </a>
+            </div>
+    </div>
+
+</body>
+
+<script src="singleplayer.js"></script>
+
+
+
+
+</html>

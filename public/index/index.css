@@ -1,0 +1,56 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #272727;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 2% 2%;
+    grid-auto-flow: row;
+    justify-content: center;
+    align-content: center;
+    grid-template-areas: "top1 top2 top3" "single multi computer" ". . .";
+    padding: 0 10%;
+    height: 100%;
+}
+
+.single {
+    position: relative;
+    bottom: 5%;
+    grid-area: single;
+}
+
+.multi {
+    grid-area: multi;
+    bottom: 5%;
+    position: relative;
+}
+
+.computer {
+    grid-area: computer;
+    bottom: 5%;
+    position: relative;
+}
+
+.link {
+    height: 100%;
+    width: 100%;
+    color: lightgray;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+    font-weight: 200;
+}
+
+a, a:hover, a:visited, a:active {
+    text-decoration: none;
+    text-align: center;
+}
+
+img {
+    margin: auto;
+    display: block;
+}

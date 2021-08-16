@@ -3,3 +3,4 @@ Dockerfile
 updateWebsite.sh
 .gitignore
 .dockerignore
+updateWebsite.sh

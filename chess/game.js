@@ -184,6 +184,14 @@ class Game {
                         }
         });
     }
+    getGameState = () => {
+        return {
+            board: this.board,
+            castling: this.canCastle,
+            enPassasnt: this.enPassantSquare,
+            whiteTurn: this.whiteTurn
+        }
+    }
 
 }
 module.exports = Game;

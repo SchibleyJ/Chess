@@ -10,6 +10,7 @@ class Game {
         this.enPassantSquare = [];
         this.result = undefined;
         this.canCastle = [true, true, true, true];
+        this.lastMove = [];
         this.captures = {
             white: {
                 Pawn: 0,
@@ -47,7 +48,7 @@ class Game {
 
 
     //when sending data to front end, data should be formatted as:
-    //[board, whiteTurn, endString, updateSquares, captures]
+    //[board, whiteTurn, endString, updateSquares, captures, recentMove, loginInfo]
     //endString comes from the result of makeMove and is result[1]
     //updateSquares comes from the result of makeMove and is result[2]
     //captures is the captures object in this file which stores the pieces captured by both players
@@ -92,15 +93,21 @@ class Game {
                             this.captures[this.whiteTurn ? 'white' : 'black'][this.result[3]]++;
                         }
 
+                        if (this.lastMove.length){
+                        this.result[2].push(this.lastMove[0], this.lastMove[1]);
+                        }
+
+                        this.lastMove = this.result[4];
+
                         this.whiteTurn = !this.whiteTurn;
                         this.enPassantSquare = this.result[0];
                         if (client.userData.gameType == 0) {
-                            client.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures]));
+                            client.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures,this.lastMove]));
                         } else {
                             wss.clients.forEach(client_ => {
                                 if (client_.userData.gameID == this.gameID) {
                                     //console.log(client.userData.name)
-                                    client_.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures]));
+                                   client_.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures, this.lastMove]));
                                 }
                             });
                         }
@@ -113,6 +120,7 @@ class Game {
                 this.enPassantSquare = [];
                 this.canCastle = [true, true, true, true];
                 this.results = undefined;
+                this.lastMove = [];
                 this.captures = {
                     white: {
                         Pawn: 0,
@@ -130,11 +138,11 @@ class Game {
                     }
                 }
                 if (client.userData.gameType == 0) {
-                    client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures]));
+                    client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove]));
                 } else {
                     wss.clients.forEach(client_ => {
                         if (client_.userData.gameID == this.gameID) {
-                            client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures]));
+                            client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove]));
                         }
                     });
                 }
@@ -154,11 +162,11 @@ class Game {
                 }
                 //console.log(this.playerData)
                 if (client.userData.color == 2) {
-                    client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
+                    client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
                 } else {
                     wss.clients.forEach(client_ => {
                         if (client_.userData?.gameID == this.gameID) {
-                            client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
+                            client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
                         }
                     });
                 }

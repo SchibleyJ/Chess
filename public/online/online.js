@@ -5,7 +5,7 @@ let board = [];
 let prevCaptures;
 //let whiteTurnClock = [true, false];
 
-const ws = new WebSocket(`wss://${location.host}/transfer`);
+const ws = new WebSocket(`ws${location.protocol == "https:" ? 's' : ''}://${location.host}/transfer`);
 
 //login 
 ws.onopen = () => {
@@ -76,15 +76,15 @@ ws.onmessage = (e) => {
         console.log(!data[3].length);
         if (!data[3].length) {
             console.log('here')
-            drawBoard(board, data[1], data[2], data[5]);
+            drawBoard(board, data[1], data[2], data[5], data[6]);
         } else {
-            updateBoard(board, data[1], data[2], data[3]);
+            updateBoard(board, data[1], data[2], data[3], data[5]);
         }
     }
 }
 
 
-const drawBoard = (board, whiteTurn, gameResult, names) => {
+const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
     console.log(names);
     if (names.whitePlayer) document.getElementById('userName1').innerHTML = names?.whitePlayer;
     if (names.blackPlayer) document.getElementById('userName2').innerHTML = names?.blackPlayer;
@@ -101,6 +101,21 @@ const drawBoard = (board, whiteTurn, gameResult, names) => {
             ctx.fillStyle = 'slategray';
             ctx.fillRect(j - (i % 200), i, 100, 100);
         }
+
+//last move squares
+if (lastMove && lastMove.length) {
+    for (let k = 0; k < 2; k++) {
+        if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+            ctx.fillStyle = '#709090';
+            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+        } else {
+            ctx.fillStyle ='#9aadad';
+            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+        }
+    }
+}
+//
+
         ctx.fillStyle = 'black';
         ctx.fillText("" + (9 - (i / 100 + 1)), 5, i + 25);
         if (i == 700) {
@@ -127,7 +142,7 @@ const drawBoard = (board, whiteTurn, gameResult, names) => {
     }
 }
 
-const updateBoard = (board, whiteTurn, gameResult, updateSquares) => {
+const updateBoard = (board, whiteTurn, gameResult, updateSquares, lastMove) => {
     //whiteTurnClock[1] = true;
     document.getElementById("infoP").innerHTML = gameResult.length ? gameResult : (whiteTurn ? "White's turn" : "Black's turn");
 
@@ -139,6 +154,21 @@ const updateBoard = (board, whiteTurn, gameResult, updateSquares) => {
             ctx.fillStyle = 'slategray';
             ctx.fillRect(updateSquares[i][0] * 100, updateSquares[i][1] * 100, 100, 100)
         }
+
+//last move squares
+if (lastMove && lastMove.length) {
+    for (let k = 0; k < 2; k++) {
+        if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+            ctx.fillStyle = '#709090';
+            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+        } else {
+            ctx.fillStyle ='#9aadad';
+            ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+        }
+    }
+}
+//
+
         ctx.fillStyle = 'black';
         if (updateSquares[i][0] == 0) {
             ctx.fillText(8 - updateSquares[i][1], 5, updateSquares[i][1] * 100 + 25);;

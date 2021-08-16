@@ -73,7 +73,7 @@ const makeMove = (body, board, whiteTurn, enPassantSquare, canCastle) => {
         //endString is the result of a game-end check, either empty string, checkmate, or stalemate
         //updateSquares is an array of squares which will be redrawn one the response is sent to the front end
         //piece is a string of a potential piece captured, starting with a capital for use in frontend
-        let result = [enPassantSquare, "", updateSquares, moveResponse[4] ? moveResponse[4].charAt(0).toUpperCase() + moveResponse[4].slice(1) : undefined];
+        let result = [enPassantSquare, "", updateSquares, moveResponse[4] ? moveResponse[4].charAt(0).toUpperCase() + moveResponse[4].slice(1) : undefined, [[moveX, moveY], [pieceX, pieceY]]];
         if (moves.length == 0) {
             let getKingPos = () => {
                 for (let i = 0; i < 8; i++) {

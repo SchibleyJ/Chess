@@ -47,10 +47,10 @@ wss.on('connection', (client) => {
 
     });
     client.on('close', () => {
-        //console.log(client.userData.color);
-//test
+        
+                
 
-        //console.log(userData)
+
         console.log('closed');
         console.log('Number of clients: ', wss.clients.size);
     });
@@ -58,6 +58,5 @@ wss.on('connection', (client) => {
 });
 
 server.listen(port, function () {
-
     console.log(`http/ws server listening on ${port}`);
 });

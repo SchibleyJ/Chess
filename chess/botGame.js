@@ -1,4 +1,4 @@
-const makeMove = require('./makeMove.js');
+const makeMove = require('./functions/makeMove.js');
 const createBoard = require('./functions/board.js');
 
 class Game {

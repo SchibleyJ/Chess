@@ -26,13 +26,13 @@ wss.on('connection', (client) => {
                     case 0:
                         singleGames.push(new SingleGame());
                         client["userData"] = { 'gameType': 0, 'gameID': (singleGames.length - 1) };
-                        soloGames[client.userData.gameID].create(client);
+                        singleGames[client.userData.gameID].create(client);
                         break;
                     case 1:
-                        soloGames[client.userData.gameID].move(wss, client);
+                        singleGames[client.userData.gameID].move(message, wss, client);
                         break;
                     case 2:
-                        soloGames[client.userData.gameID].reset(wss, client);
+                        singleGames[client.userData.gameID].reset(wss, client);
                         break;
                 }
                 break;
@@ -47,7 +47,7 @@ wss.on('connection', (client) => {
                         onlineGames[client.userData.gameID].create(message, client);
                         break;
                     case 1:
-                        onlineGames[client.userData.gameID].move(wss, client);
+                        onlineGames[client.userData.gameID].move(message, wss, client);
                         break;
                     case 2:
                         onlineGames[client.userData.gameID].reset(wss, client);
@@ -64,86 +64,87 @@ wss.on('connection', (client) => {
         }
 
     })
-});
 
-/*switch (message.messageType) {
 
-    case 0:
-        switch (message.body.gameType) {
-            case 0:
-                soloGames.push(new Game());
-                client["userData"] = { 'gameType': 0, 'gameID': (soloGames.length - 1) };
-                soloGames[client.userData.gameID].main(message, wss, client);
-            break;
-            
-            case 1:
-                if (!onlineGames[message.body.gameID]) {
-                    onlineGames[message.body.gameID] = new Game(message.body.gameID);
-                }
-                client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
-                onlineGames[client.userData.gameID].main(message, wss, client);
-            break;
-
-            case 2:
-        botGames.push(new Game());
-        client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
-        botGames[client.userData.gameID].main(message, wss, client);
+    /*switch (message.messageType) {
+    
+        case 0:
+            switch (message.body.gameType) {
+                case 0:
+                    soloGames.push(new Game());
+                    client["userData"] = { 'gameType': 0, 'gameID': (soloGames.length - 1) };
+                    soloGames[client.userData.gameID].main(message, wss, client);
                 break;
+                
+                case 1:
+                    if (!onlineGames[message.body.gameID]) {
+                        onlineGames[message.body.gameID] = new Game(message.body.gameID);
+                    }
+                    client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
+                    onlineGames[client.userData.gameID].main(message, wss, client);
+                break;
+    
+                case 2:
+            botGames.push(new Game());
+            client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
+            botGames[client.userData.gameID].main(message, wss, client);
+                    break;
+                }
+        break;
+        case 1:
+    
+    
+    }*/
+
+
+    //}
+    //game(message, wss, client, userData);
+    /*
+    if (message.messageType == 0) {
+        if (message.body.gameType == 0) {
+            //console.log(createGame())
+            soloGames.push(new Game());
+            client["userData"] = { 'gameType': 0, 'gameID': (soloGames.length - 1) };
+            soloGames[client.userData.gameID].main(message, wss, client);
+        }
+        if (message.body.gameType == 1) {
+            if (!onlineGames[message.body.gameID]) {
+                onlineGames[message.body.gameID] = new Game(message.body.gameID);
             }
-    break;
-    case 1:
-
-
-}*/
-
-
-//}
-//game(message, wss, client, userData);
-/*
-if (message.messageType == 0) {
-    if (message.body.gameType == 0) {
-        //console.log(createGame())
-        soloGames.push(new Game());
-        client["userData"] = { 'gameType': 0, 'gameID': (soloGames.length - 1) };
-        soloGames[client.userData.gameID].main(message, wss, client);
-    }
-    if (message.body.gameType == 1) {
-        if (!onlineGames[message.body.gameID]) {
-            onlineGames[message.body.gameID] = new Game(message.body.gameID);
+            client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
+            onlineGames[client.userData.gameID].main(message, wss, client);
         }
-        client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
-        onlineGames[client.userData.gameID].main(message, wss, client);
-    }
-    if (message.body.gameType == 2){
-        botGames.push(new Game());
-        client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
-        botGames[client.userData.gameID].main(message, wss, client);
-    }
-} else {
-    if (message.body.gameType == 0) {
-        soloGames[client.userData.gameID].main(message, wss, client);
-    }
-    if (message.body.gameType == 1) {
-        onlineGames[client.userData.gameID].main(message, wss, client);
-    }
-}*/
-
-//  });
-
-client.on('close', () => {
-    if (client.userData.gameType == 1 && client.userData.color !== 2) {
-        if (client.userData.color == 0) {
-            onlineGames[client.userData.gameID].playerData.whitePlayer = undefined;
+        if (message.body.gameType == 2){
+            botGames.push(new Game());
+            client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
+            botGames[client.userData.gameID].main(message, wss, client);
         }
-        if (client.userData.color == 1) {
-            onlineGames[client.userData.gameID].playerData.blackPlayer = undefined;
+    } else {
+        if (message.body.gameType == 0) {
+            soloGames[client.userData.gameID].main(message, wss, client);
         }
-        onlineGames[client.userData.gameID].reloadBoard(wss, client.userData.color);
-    }
+        if (message.body.gameType == 1) {
+            onlineGames[client.userData.gameID].main(message, wss, client);
+        }
+    }*/
+
+    //  });
+
+    client.on('close', () => {
+        if (client.userData.gameType == 1 && client.userData.color !== 2) {
+            if (client.userData.color == 0) {
+                onlineGames[client.userData.gameID].playerData.whitePlayer = undefined;
+            }
+            if (client.userData.color == 1) {
+                onlineGames[client.userData.gameID].playerData.blackPlayer = undefined;
+            }
+            onlineGames[client.userData.gameID].reloadBoard(wss, client.userData.color);
+        }
 
 
-    console.log('closed');
-    console.log('Number of clients: ', wss.clients.size);
+        console.log('closed');
+        console.log('Number of clients: ', wss.clients.size);
+    });
 });
 
 

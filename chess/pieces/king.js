@@ -1,4 +1,4 @@
-let getAttacked = require('./getAttacked.js');
+let getAttacked = require('../functions/getAttacked.js');
 
 const King = class King {
     constructor(isWhite) {

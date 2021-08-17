@@ -1,4 +1,4 @@
-const makeMove = require('./makeMove.js');
+const makeMove = require('./functions/makeMove.js');
 const createBoard = require('./functions/board.js');
 
 class Game {
@@ -45,13 +45,13 @@ class Game {
    }
     
 
-    move = (wss, client) => {
+    move = (request, wss, client) => {
         if (
             (this.whiteTurn && client.userData.color == 0 ||
                 (!this.whiteTurn && client.userData.color) == 1 ||
                 (client.userData.gameType === 0))) {
 
-            this.result = this.makeMove(body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
+            this.result = this.makeMove(request.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
 
             //update captures object
             if (this.result[0]) {

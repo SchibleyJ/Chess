@@ -1,4 +1,4 @@
-let King = require('./king.js');
+let King = require('../pieces/king.js');
 let Queen = require('../pieces/queen.js');
 let Rook = require('../pieces/rook.js');
 let Bishop = require('../pieces/bishop.js');

@@ -40,7 +40,7 @@ const joinLobby = (code) => {
     document.getElementById('lobbySelect').classList.add('hidden');
     document.getElementById('login').classList.remove('hidden');
 
-    ws.send(JSON.stringify({ gameType: 1, messageType: 1, body: {gameID: code } }));
+    ws.send(JSON.stringify({ gameType: 1, messageType: 0, body: {gameID: code } }));
 
 }
 
@@ -49,7 +49,6 @@ ws.onmessage = (e) => {
     //console.log(e)
     let data = JSON.parse(e.data);
     if (data[0] == "LOGIN") {
-        console.log(JSON.stringify(data[1]))
         if (data[1].whitePlayer) {
             document.getElementById('colorSelectWhite').classList.add('hidden');
             //document.getElementById('white').classList.add('hidden');

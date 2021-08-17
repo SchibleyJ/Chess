@@ -41,22 +41,17 @@ class Game {
     //captures is the captures object in this file which stores the pieces captured by both players
 
     create = (request, client) => {
-        if (request.body.gameType == 1) {
-            console.log(this.playerData)
             client.send(JSON.stringify(["LOGIN", { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-        } else {
-            client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures]));
-        }
    }
     
 
-    move = (wss, client) => {
+    move = (request, wss, client) => {
         if (
             (this.whiteTurn && client.userData.color == 0 ||
                 (!this.whiteTurn && client.userData.color) == 1 ||
                 (client.userData.gameType === 0))) {
 
-            this.result = this.makeMove(body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
+            this.result = this.makeMove(request.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
 
             //update captures object
             if (this.result[0]) {

@@ -105,15 +105,8 @@ class Game {
                 Queen: 0
             }
         }
-        if (client.userData.gameType == 0) {
             client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove]));
-        } else {
-            wss.clients.forEach(client_ => {
-                if (client_.userData.gameID == this.gameID) {
-                    client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove]));
-                }
-            });
-        }
+        
     }
     
     login = (request, wss, client) => {

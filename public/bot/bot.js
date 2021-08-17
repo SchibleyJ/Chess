@@ -18,10 +18,6 @@ ws.onopen = () => {
 ws.onmessage = (e) => {
     //console.log(e)
     let data = JSON.parse(e.data);
-    if (data[0] == "LOGIN") {
-        console.log('here1');
-        return;
-    }
     board = data[0];
     //whiteTurnClock[0] = data[1]
 

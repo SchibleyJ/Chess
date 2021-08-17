@@ -9,7 +9,7 @@ const ws = new WebSocket(`ws${location.protocol == "https:" ? 's' : ''}://${loca
 //login 
 ws.onopen = () => {
     //document.getElementById('parent').classList.add('hidden')
-    ws.send(JSON.stringify({ messageType: 0, body: { gameType: 0 } }));
+    ws.send(JSON.stringify({ gameType: 0, messageType: 0,  body: {  } }));
 };
 
 
@@ -215,9 +215,10 @@ gameCanvas.addEventListener('mousedown', (event) => {
 const sendMove = (piece, moveTo) => {
     ws.send(JSON.stringify({
         //1 = move
+        gameType: 0,
         messageType: 1,
         body: {
-            gameType: 0,
+            
             piece: piece,
             move: moveTo
         }
@@ -243,7 +244,7 @@ const sendMove = (piece, moveTo) => {
 
 const resetGame = () => {
     //2 = reset
-    ws.send(JSON.stringify({ messageType: 2, body: { gameType: 0 } }));
+    ws.send(JSON.stringify({gameType: 0, messageType: 2, body: {  } }));
     /*fetch('/reset', {
         method: 'POST',
         headers: {

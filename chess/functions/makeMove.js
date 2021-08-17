@@ -1,5 +1,5 @@
 const makeMove = (body, board, whiteTurn, enPassantSquare, canCastle) => {
-    let Queen = require('./queen.js');
+    let Queen = require('./pieces/queen.js');
     let getAttacked = require('./getAttacked.js');
     let pseudoLegalCheck = require('./pseudoLegalCheck.js');
     let gameEndCheck = require('./gameEndCheck.js')

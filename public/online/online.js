@@ -16,7 +16,7 @@ ws.onopen = () => {
 const login = () => {
     let name = document.getElementById("username").value;
     if (color !== undefined && name !== "") {
-        ws.send(JSON.stringify({ messageType: 3, body: { gameType: 1, name: name, color: color } }));
+        ws.send(JSON.stringify({ gameType: 1,  messageType: 3, body: { name: name, color: color } }));
         document.getElementById('parent').classList.remove('hidden');
         document.getElementById('login').classList.add('hidden');
     }
@@ -40,7 +40,7 @@ const joinLobby = (code) => {
     document.getElementById('lobbySelect').classList.add('hidden');
     document.getElementById('login').classList.remove('hidden');
 
-    ws.send(JSON.stringify({ messageType: 0, body: { gameType: 1, gameID: code } }));
+    ws.send(JSON.stringify({ gameType: 1, messageType: 1, body: {gameID: code } }));
 
 }
 
@@ -270,9 +270,10 @@ gameCanvas.addEventListener('mousedown', (event) => {
 const sendMove = (piece, moveTo) => {
     ws.send(JSON.stringify({
         //1 = move
+        gameType: 1,
         messageType: 1,
         body: {
-            gameType: 1,
+            
             piece: piece,
             move: moveTo
         }
@@ -299,7 +300,7 @@ const sendMove = (piece, moveTo) => {
 const resetGame = () => {
     //2 = reset
     if (color == 1 || color == 2) {
-        ws.send(JSON.stringify({ messageType: 2, body: {} }));
+        ws.send(JSON.stringify({ gameType: 1, messageType: 2, body: {} }));
     }
     /*fetch('/reset', {
         method: 'POST',

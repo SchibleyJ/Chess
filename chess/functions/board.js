@@ -1,9 +1,9 @@
 let King = require('./king.js');
-let Queen = require('./queen.js');
-let Rook = require('./rook.js');
-let Bishop = require('./bishop.js');
-let Knight = require('./knight.js');
-let Pawn = require('./pawn.js');
+let Queen = require('../pieces/queen.js');
+let Rook = require('../pieces/rook.js');
+let Bishop = require('../pieces/bishop.js');
+let Knight = require('../pieces/knight.js');
+let Pawn = require('../pieces/pawn.js');
 const createBoard = () => {
     //0 always means a square is empty
     let board =

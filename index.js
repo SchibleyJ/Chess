@@ -131,7 +131,7 @@ wss.on('connection', (client) => {
     //  });
 
     client.on('close', () => {
-        if (client.userData.gameType == 1 && client.userData.color !== 2) {
+        if (client.useData && client.userData.gameType == 1 && client.userData.color !== 2) {
             if (client.userData.color == 0) {
                 onlineGames[client.userData.gameID].playerData.whitePlayer = undefined;
             }

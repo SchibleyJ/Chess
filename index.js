@@ -44,7 +44,7 @@ wss.on('connection', (client) => {
                             onlineGames[message.body.gameID] = new OnlineGame(message.body.gameID);
                         }
                         client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
-                        onlineGames[client.userData.gameID].create(message, client);
+                        onlineGames[client.userData.gameID].create(client);
                         break;
                     case 1:
                         onlineGames[client.userData.gameID].move(message, wss, client);

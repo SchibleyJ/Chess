@@ -40,7 +40,7 @@ class Game {
     //updateSquares comes from the result of makeMove and is result[2]
     //captures is the captures object in this file which stores the pieces captured by both players
 
-    create = (request, client) => {
+    create = (client) => {
             client.send(JSON.stringify(["LOGIN", { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
    }
     

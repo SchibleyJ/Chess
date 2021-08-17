@@ -34,19 +34,6 @@ class Game {
         this.gameID = newID;
     }
 
-
-    /*
-        //board = this.createBoard();
-        whiteTurn = true;
-        enPassantSquare = [];
-        //the result variable is written to after a move is made, format is found in makeMove.js
-        result;
-        //order is BR, BL, TR, TL
-        canCastle = 
-        captures = 
-    */
-
-
     //when sending data to front end, data should be formatted as:
     //[board, whiteTurn, endString, updateSquares, captures, recentMove, loginInfo]
     //endString comes from the result of makeMove and is result[1]
@@ -54,10 +41,6 @@ class Game {
     //captures is the captures object in this file which stores the pieces captured by both players
 
 
-    //i am sorry i was tired
-    //was trying to make lobbies work
-    //color choice not hiding taken colors, weird stuff with bored drawing also
-    //walk through intro again
     main = (request, wss, client) => {
         //console.log(request.type)
         let body = request.body;

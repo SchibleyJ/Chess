@@ -8,6 +8,7 @@ const port = process.env.PORT || 8080;
 const wss = new WebSocket.Server({ server: server, path: '/transfer' });
 let soloGames = [];
 let onlineGames = {};
+let botGames = [];
 
 server.on('request', app);
 
@@ -35,6 +36,11 @@ wss.on('connection', (client) => {
                 }
                 client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
                 onlineGames[client.userData.gameID].main(message, wss, client);
+            }
+            if (message.body.gameType == 2){
+                botGames.push(new Game());
+                client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
+                botGames[client.userData.gameID].main(message, wss, client);
             }
         } else {
             if (message.body.gameType == 0) {

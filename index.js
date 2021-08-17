@@ -59,7 +59,19 @@ wss.on('connection', (client) => {
                 }
             //bot game
             case 2:
-                break;
+                switch (message.messageType) {
+                    case 0:
+                        botGames.push(new BotGame());
+                        client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1), color: message.body.color };
+                        botGames[client.userData.gameID].create(client);
+                        break;
+                    case 1:
+                        botGames[client.userData.gameID].move(message, wss, client);
+                        break;
+                    case 2:
+                        botGames[client.userData.gameID].reset(wss, client);
+                        break;
+                }
 
         }
 

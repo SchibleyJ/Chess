@@ -40,23 +40,23 @@ class Game {
     //updateSquares comes from the result of makeMove and is result[2]
     //captures is the captures object in this file which stores the pieces captured by both players
 
-    create = (request, client) => {
-        if (request.body.gameType == 1) {
-            console.log(this.playerData)
-            client.send(JSON.stringify(["LOGIN", { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-        } else {
+    create = (client) => {
+            if (client.userData.color){
+                this.playerData.blackPlayer = client;
+            } else {
+                this.playerData.whitePlayer = client;
+            }
             client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures]));
-        }
    }
     
 
-    move = (wss, client) => {
+    move = (message, wss, client) => {
         if (
             (this.whiteTurn && client.userData.color == 0 ||
                 (!this.whiteTurn && client.userData.color) == 1 ||
                 (client.userData.gameType === 0))) {
 
-            this.result = this.makeMove(body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
+            this.result = this.makeMove(message.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
 
             //update captures object
             if (this.result[0]) {
@@ -121,30 +121,6 @@ class Game {
         }
     }
     
-    login = (request, wss, client) => {
-        client.userData.name = request.body.name;
-        if (this.playerData.whitePlayer == undefined && request.body.color === 0) {
-            client.userData.color = 0;
-            this.playerData.whitePlayer = client;
-        }
-        if (this.playerData.blackPlayer == undefined && request.body.color === 1) {
-            client.userData.color = 1;
-            this.playerData.blackPlayer = client;
-        }
-        if (client.userData.color == undefined || request.body.color == 2) {
-            client.userData.color = 2;
-        }
-        //console.log(this.playerData)
-        if (client.userData.color == 2) {
-            client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-        } else {
-            wss.clients.forEach(client_ => {
-                if (client_.userData?.gameID == this.gameID) {
-                    client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-                }
-            });
-        }
-    }
 
     reloadBoard = (wss, color) => {
         wss.clients.forEach(client_ => {

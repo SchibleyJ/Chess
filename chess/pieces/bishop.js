@@ -3,6 +3,7 @@ const Bishop = class Bishop {
         this.isWhite = isWhite;
         this.image = (isWhite ? `whiteBishop.png` : `blackBishop.png`);
         this.piece = "bishop";
+        this.value = 330;
     }
 
 

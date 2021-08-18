@@ -1,3 +1,6 @@
+//
+const evaluate = require('./functions/evaluate.js');
+//
 const makeMove = require('./functions/makeMove.js');
 const createBoard = require('./functions/board.js');
 
@@ -67,6 +70,9 @@ class Game {
 
                 this.whiteTurn = !this.whiteTurn;
                 this.enPassantSquare = this.result[0];
+
+                console.log(evaluate(this.board));
+
                 if (client.userData.gameType == 0) {
                     client.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures, this.lastMove]));
                 } else {

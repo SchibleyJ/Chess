@@ -66,7 +66,7 @@ wss.on('connection', (client) => {
                         botGames[client.userData.gameID].create(client);
                         break;
                     case 1:
-                        botGames[client.userData.gameID].move(message, wss, client);
+                        botGames[client.userData.gameID].move(message, client, false);
                         break;
                     case 2:
                         botGames[client.userData.gameID].reset(wss, client);

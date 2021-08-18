@@ -3,6 +3,7 @@ const Rook = class Rook {
         this.isWhite = isWhite;
         this.image = (isWhite ? `whiteRook.png` : `blackRook.png`);
         this.piece = "rook";
+        this.value = 500;
     }
 
     isLegalMove(board, pieceX, pieceY, moveX, moveY) {

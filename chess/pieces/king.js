@@ -5,6 +5,7 @@ const King = class King {
         this.isWhite = isWhite;
         this.image = (isWhite ? `whiteKing.png` : `blackKing.png`);
         this.piece = "king";
+        this.value = 999999;
     }
 
     isLegalMove(board, pieceX, pieceY, moveX, moveY, x, canCastle) {

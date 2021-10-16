@@ -1,6 +1,4 @@
 /node_modules
-Dockerfile
 updateWebsite.sh
 .gitignore
 .dockerignore
-updateWebsite.sh

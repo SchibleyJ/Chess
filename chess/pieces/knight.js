@@ -3,6 +3,7 @@ const Knight = class Knight {
         this.isWhite = isWhite;
         this.image = (isWhite ? `whiteKnight.png` : `blackKnight.png`);
         this.piece = "knight";
+        this.value = 320; 
     }
     isLegalMove(board, pieceX, pieceY, moveX, moveY) {
         if ((Math.abs(pieceX - moveX) == 1 && Math.abs(pieceY - moveY) == 2) || 

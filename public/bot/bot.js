@@ -10,18 +10,31 @@ const ws = new WebSocket(`ws${location.protocol == "https:" ? 's' : ''}://${loca
 //login 
 ws.onopen = () => {
     //document.getElementById('parent').classList.add('hidden')
-    //ws.send(JSON.stringify({ type: 0, body: name}))
+    //ws.send(JSON.stringify({ gameType: 2, messageType: 0, body: {} }));
 };
 
-const login = () => {
-    let name = document.getElementById("username").value;
-    if (color !== undefined && name !== "") {
-        ws.send(JSON.stringify({ gameType: 1,  messageType: 3, body: { name: name, color: color } }));
-        document.getElementById('parent').classList.remove('hidden');
-        document.getElementById('login').classList.add('hidden');
-    }
-}
 
+
+ws.onmessage = (e) => {
+    //console.log(e)
+    let data = JSON.parse(e.data);
+    board = data[0];
+    //whiteTurnClock[0] = data[1]
+
+    if (JSON.stringify(prevCaptures) !== JSON.stringify(data[4])) {
+        prevCaptures = data[4];
+        updateCaptures(data[4]);
+    }
+    console.log(data[3]);
+    //console.log(!data[3].length);
+    if (!data[3].length) {
+        console.log('here')
+        drawBoard(board, data[1], data[2], data[5]);
+    } else {
+        updateBoard(board, data[1], data[2], data[3], data[5]);
+    }
+
+}
 
 const setColor = (newColor) => {
     if (newColor) {
@@ -33,69 +46,10 @@ const setColor = (newColor) => {
     }
     color = newColor;
 }
-//
-
-const joinLobby = (code) => {
-    console.log(code);
-    document.getElementById('lobbySelect').classList.add('hidden');
-    document.getElementById('login').classList.remove('hidden');
-
-    ws.send(JSON.stringify({ gameType: 1, messageType: 0, body: {gameID: code } }));
-
-}
 
 
-ws.onmessage = (e) => {
-    //console.log(e)
-    let data = JSON.parse(e.data);
-    if (data[0] == "LOGIN") {
-        if (data[1].whitePlayer) {
-            document.getElementById('colorSelectWhite').classList.add('hidden');
-            //document.getElementById('white').classList.add('hidden');
-        }
-        if (data[1].blackPlayer) {
-            console.log('here')
-            document.getElementById('colorSelectBlack').classList.add('hidden');
-            // document.getElementById('black').classList.add('hidden');
-        }
-        if (data[1].whitePlayer && data[1].blackPlayer) {
-            document.getElementById("username").value = 'spectator';
-            color = 2;
-            login();
-        }
-    } else {
-        board = data[0];
-        //whiteTurnClock[0] = data[1]
+const drawBoard = (board, whiteTurn, gameResult, lastMove) => {
 
-        if (JSON.stringify(prevCaptures) !== JSON.stringify(data[4])) {
-            prevCaptures = data[4];
-            updateCaptures(data[4]);
-        }
-        console.log(data[3]);
-        console.log(!data[3].length);
-        if (!data[3].length) {
-            console.log('here')
-            drawBoard(board, data[1], data[2], data[5], data[6]);
-        } else {
-            updateBoard(board, data[1], data[2], data[3], data[5]);
-        }
-    }
-}
-
-
-const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
-    console.log(names);
-    if (names.whitePlayer) {
-
-        document.getElementById('userName1').innerHTML = names?.whitePlayer;
-    } else {
-        document.getElementById('userName1').innerHTML = "Player 1";
-    }
-    if (names.blackPlayer) {
-        document.getElementById('userName2').innerHTML = names?.blackPlayer;
-    } else {
-        document.getElementById('userName2').innerHTML = "Player 2";
-    }
 
     document.getElementById("infoP").innerHTML = gameResult.length ? gameResult : (whiteTurn ? "White's turn" : "Black's turn");
 
@@ -112,11 +66,11 @@ const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
         //last move squares
         if (lastMove && lastMove.length) {
             for (let k = 0; k < 2; k++) {
-                if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+                if (lastMove[k][0] % 2 != lastMove[k][1] % 2) {
                     ctx.fillStyle = '#709090';
                     ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
                 } else {
-                    ctx.fillStyle = '#9aadad';
+                    ctx.fillStyle = '#94a6a6';
                     ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
                 }
             }
@@ -265,14 +219,21 @@ gameCanvas.addEventListener('mousedown', (event) => {
     }
 });
 
+const login = () => {
+    if (color !== undefined) {
+        ws.send(JSON.stringify({ gameType: 2, messageType: 0, body: { color: color } }));
+        document.getElementById('parent').classList.remove('hidden');
+        document.getElementById('login').classList.add('hidden')
+    }
+}
 
 const sendMove = (piece, moveTo) => {
     ws.send(JSON.stringify({
         //1 = move
-        gameType: 1,
+        gameType: 2,
         messageType: 1,
         body: {
-            
+
             piece: piece,
             move: moveTo
         }
@@ -298,9 +259,7 @@ const sendMove = (piece, moveTo) => {
 
 const resetGame = () => {
     //2 = reset
-    if (color == 1 || color == 2) {
-        ws.send(JSON.stringify({ gameType: 1, messageType: 2, body: {} }));
-    }
+    ws.send(JSON.stringify({ gameType: 2, messageType: 2, body: {} }));
     /*fetch('/reset', {
         method: 'POST',
         headers: {

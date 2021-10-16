@@ -4,6 +4,7 @@ const Pawn = class Pawn {
         this.image = (isWhite ? `whitePawn.png` : `blackPawn.png`);
         this.piece = "pawn";
         this.hasMoved = false;
+        this.value = 100;
     }
 
     isLegalMove(board, pieceX, pieceY, moveX, moveY, enPassantSquare) {

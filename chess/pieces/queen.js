@@ -3,6 +3,7 @@ const Queen = class Queen {
         this.isWhite = isWhite;
         this.image = (isWhite ? `whiteQueen.png` : `blackQueen.png`);
         this.piece = "queen";
+        this.value = 900;
     }
 
     isLegalMove(board, pieceX, pieceY, moveX, moveY) {

@@ -1,4 +1,4 @@
-let Queen = require('./queen.js');
+let Queen = require('../pieces/queen.js');
 let getAttacked = require('./getAttacked.js');
 
 const pseudoLegalCheck = (oldBoard, moveResponse, whiteTurn, pieceX, pieceY, moveX, moveY) => {

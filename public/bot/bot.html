@@ -1,5 +1,5 @@
 <html>
-<link rel='stylesheet' type='text/css' href='online.css'>
+<link rel='stylesheet' type='text/css' href='bot.css'>
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
 <body>
@@ -35,11 +35,8 @@
                 </div>
                 <div id="clock1" class="clock">White Clock</div>
                 <div class="endGame">
-                    <button onclick="resetGame()" class="draw">
-                        Offer Draw
-                    </button>
                     <button onclick="resetGame()" class="resign">
-                        Resign
+                        Reset
                     </button>
                 </div>
 
@@ -62,22 +59,12 @@
             </div>
             
         </div>
-    <div id="lobbySelect" class="lobbySelect">
-        <p>Enter a 3 character string which will act as the code to a lobby.
-        You can input a new code to create a lobby, or input another player's
-        code to join theirs.</p> 
-        <br>
-        <input class="usernameInput" id="lobbyCode" name="lobbyCode" type="text" placeholder="e n t e r   c o d e" maxlength="3"/><br>
-        <br><button class="usernameInput" style="width: 30%" onclick="joinLobby(document.getElementById('lobbyCode').value)">j o i n</button>
-        
-   
-    </div>
-    <div id="login" class="login hidden">
+        <div id="login" class="login">
         <div class="loginInner">
-            <input type="text" class="usernameInput" id="username" name="username" placeholder="e n t e r   u s e r n a m e" /><br>
             <br>s e l e c t &nbsp;&nbsp;c o l o r<br><br>
             <img class="colorSelect" id="colorSelectWhite" src="img/whitePawn.png" onclick="setColor(0)">
             <img class="colorSelect" id="colorSelectBlack" src="img/blackInverse/blackPawn.png" onclick="setColor(1)"><br>
+<br><button class="usernameInput" style="width: 45%" onclick="login()">s u b m i t</button>
 <!--
             <div id="white"><input type="radio" name="colorSelect" value="white" onclick=>
                 <label for="white">White</label><br>
@@ -95,14 +82,13 @@
                 <input type="radio" id="spectator" name="colorSelect" value="spec" onclick="setColor(3)">
                 <label id="spectator" for="either">Spectator</label><br>
             </div>-->
-            <br><button class="usernameInput" style="width: 45%" onclick="login()">s u b m i t</button>
         </div>
     </div>
 
 
 </body>
 
-<script src="online.js"></script>
+<script src="bot.js"></script>
 
 
 

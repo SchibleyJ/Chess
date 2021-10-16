@@ -1,10 +1,11 @@
-let getAttacked = require('./getAttacked.js');
+let getAttacked = require('../functions/getAttacked.js');
 
 const King = class King {
     constructor(isWhite) {
         this.isWhite = isWhite;
         this.image = (isWhite ? `whiteKing.png` : `blackKing.png`);
         this.piece = "king";
+        this.value = 999999;
     }
 
     isLegalMove(board, pieceX, pieceY, moveX, moveY, x, canCastle) {

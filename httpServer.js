@@ -17,8 +17,9 @@ app.get('/online', (req, res) => {
   res.sendFile(__dirname + '/public/online/online.html');
 });
 
-app.get('/computer', (req, res) => {
-  res.send('This feature is not added yet.  ')
+app.get('/computer', (req, res) => { 
+  app.use(express.static(__dirname + '/public/bot'));
+  res.sendFile(__dirname + '/public/bot/bot.html');
 });
 
 

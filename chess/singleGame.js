@@ -1,8 +1,7 @@
-//
-const evaluate = require('./functions/evaluate.js');
-//
-const makeMove = require('./functions/makeMove.js');
 const createBoard = require('./functions/board.js');
+const makeMove = require('./functions/makeMove.js');
+const gameEndCheck = require('./functions/gameEndCheck.js');
+
 
 class Game {
     constructor(newID) {
@@ -10,10 +9,9 @@ class Game {
         this.makeMove = makeMove;
         this.board = this.createBoard();
         this.whiteTurn = true;
-        this.enPassantSquare = [];
-        this.result = undefined;
-        this.canCastle = [true, true, true, true];
-        this.lastMove = [];
+        this.enPassantSquare = null;
+        this.canCastle = [true, true, true, true]; //maybe change this to be indexes
+        this.lastMove = [null, null];
         this.captures = {
             white: {
                 Pawn: 0,
@@ -29,6 +27,7 @@ class Game {
                 Rook: 0,
                 Queen: 0
             }
+
         }
         this.playerData = {
             whitePlayer: undefined,
@@ -37,64 +36,56 @@ class Game {
         this.gameID = newID;
     }
 
-    //when sending data to front end, data should be formatted as:
-    //[board, whiteTurn, endString, updateSquares, captures, recentMove, loginInfo]
-    //endString comes from the result of makeMove and is result[1]
-    //updateSquares comes from the result of makeMove and is result[2]
-    //captures is the captures object in this file which stores the pieces captured by both players
-
     create = (client) => {
-        client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures]));
-   }
-    
-
-    move = (request, wss, client) => {
-        if (
-            (this.whiteTurn && client.userData.color == 0 ||
-                (!this.whiteTurn && client.userData.color) == 1 ||
-                (client.userData.gameType === 0))) {
-
-            this.result = this.makeMove(request.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
-
-            //update captures object
-            if (this.result[0]) {
-                if (this.result[3]) {
-                    this.captures[this.whiteTurn ? 'white' : 'black'][this.result[3]]++;
-                }
-
-                if (this.lastMove.length) {
-                    this.result[2].push(this.lastMove[0], this.lastMove[1]);
-                }
-
-                this.lastMove = this.result[4];
-
-                this.whiteTurn = !this.whiteTurn;
-                this.enPassantSquare = this.result[0];
-
-                console.log(evaluate(this.board));
-
-                if (client.userData.gameType == 0) {
-                    client.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures, this.lastMove]));
-                } else {
-                    wss.clients.forEach(client_ => {
-                        if (client_.userData.gameID == this.gameID) {
-                            //console.log(client.userData.name)
-                            client_.send(JSON.stringify([this.board, this.whiteTurn, this.result[1], this.result[2], this.captures, this.lastMove]));
-                        }
-                    });
-                }
-            }
-        }
+        client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": "", "updateSquares": [], "recentMove": this.lastMove, "captures": this.captures }));
     }
 
+    move = (request, client) => {
+        //console.log(request)
+        //if (this.whiteTurn === (client.userData.color == 0)) {
+            let moveResult = this.makeMove(request.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
+            if (moveResult) {
+                if (moveResult.piece) {
+                    this.captures[this.whiteTurn ? "black" : "white"][this.#getPieceType(moveResult.piece)]++;
+                    //console.log(this.captures)
+                }
+                if (this.lastMove[0])
+                    moveResult.updateSquares = moveResult.updateSquares.concat(this.lastMove);
+                this.lastMove = [request.body.moveFrom, request.body.moveTo];
 
-    reset = (wss, client) => {
+                //console.log(moveResult.wasEnPassant)
+                if (moveResult.wasEnPassant) {
+                    this.board[moveResult.wasEnPassant] = null;
+                }
+
+                if (moveResult.wasCastle) {
+                    this.board[moveResult.wasCastle[0]] = this.board[moveResult.wasCastle[1]]
+                    this.board[moveResult.wasCastle[1]] = null;
+                    moveResult.updateSquares = moveResult.updateSquares.concat(moveResult.wasCastle);
+                }
+
+                this.whiteTurn = !this.whiteTurn;
+                this.enPassantSquare = moveResult.enPassantSquare;
+
+                this.board[request.body.moveTo] = this.board[request.body.moveFrom];
+                this.board[request.body.moveFrom] = null;
+
+                //game end check
+                let endString = gameEndCheck(this.board, this.whiteTurn, this.enPassantSquare, this.canCastle)
+                client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": endString, "updateSquares": moveResult.updateSquares, "recentMove": this.lastMove, "captures": this.captures }));
+                
+            }
+
+        
+    }
+
+    reset = (client) => {
+
         this.board = this.createBoard();
         this.whiteTurn = true;
-        this.enPassantSquare = [];
-        this.canCastle = [true, true, true, true];
-        this.results = undefined;
-        this.lastMove = [];
+        this.enPassantSquare = null;
+        this.canCastle = [true, true, true, true]; //maybe change this to be indexes
+        this.lastMove = [null, null];
         this.captures = {
             white: {
                 Pawn: 0,
@@ -110,55 +101,35 @@ class Game {
                 Rook: 0,
                 Queen: 0
             }
+
         }
-            client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove]));
-        
+        client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": "", "updateSquares": [], "recentMove": this.lastMove, "captures": this.captures }));
+        //client.send(JSON.stringify({ "board": 'test' }));
+
+
     }
-    
-    login = (request, wss, client) => {
-        client.userData.name = request.body.name;
-        if (this.playerData.whitePlayer == undefined && request.body.color === 0) {
-            client.userData.color = 0;
-            this.playerData.whitePlayer = client;
-        }
-        if (this.playerData.blackPlayer == undefined && request.body.color === 1) {
-            client.userData.color = 1;
-            this.playerData.blackPlayer = client;
-        }
-        if (client.userData.color == undefined || request.body.color == 2) {
-            client.userData.color = 2;
-        }
-        //console.log(this.playerData)
-        if (client.userData.color == 2) {
-            client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-        } else {
-            wss.clients.forEach(client_ => {
-                if (client_.userData?.gameID == this.gameID) {
-                    client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-                }
-            });
+
+    #getPieceType = (piece) => {
+        switch (piece % 10) {
+            case 1:
+                return "Pawn";
+                break;
+            case 2:
+                return "Knight";
+                break;
+            case 3:
+                return "Bishop";
+                break;
+            case 4:
+                return "Rook";
+                break;
+            case 5:
+                return "Queen";
+                break;
+
         }
     }
 
-    reloadBoard = (wss, color) => {
-        wss.clients.forEach(client_ => {
-            if (client_.userData.gameID == this.gameID && client_.userData.color !== color) {
-                //console.log(client.userData.name)
-                console.log('here')
-                console.log(this.playerData)
-                client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-            }
-        });
-    }
-
-    getGameState = () => {
-        return {
-            board: this.board,
-            castling: this.canCastle,
-            enPassasnt: this.enPassantSquare,
-            whiteTurn: this.whiteTurn
-        }
-    }
 }
 
 module.exports = Game;

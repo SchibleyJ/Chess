@@ -17,7 +17,7 @@ const login = () => {
     let name = document.getElementById("username").value;
     if (color !== undefined && name !== "") {
         ws.send(JSON.stringify({ gameType: 1,  messageType: 3, body: { name: name, color: color } }));
-        document.getElementById('parent').classList.remove('hidden');
+        document.getElementById('container').classList.remove('hidden');
         document.getElementById('login').classList.add('hidden');
     }
 }
@@ -36,7 +36,7 @@ const setColor = (newColor) => {
 //
 
 const joinLobby = (code) => {
-    console.log(code);
+    //console.log(code);
     document.getElementById('lobbySelect').classList.add('hidden');
     document.getElementById('login').classList.remove('hidden');
 
@@ -48,36 +48,39 @@ const joinLobby = (code) => {
 ws.onmessage = (e) => {
     //console.log(e)
     let data = JSON.parse(e.data);
-    if (data[0] == "LOGIN") {
-        if (data[1].whitePlayer) {
+    console.log(data);
+    if (data.type == "LOGIN") {
+        console.log('here')
+        if (data.playerData.whitePlayer) {
             document.getElementById('colorSelectWhite').classList.add('hidden');
             //document.getElementById('white').classList.add('hidden');
         }
-        if (data[1].blackPlayer) {
-            console.log('here')
+        if (data.playerData.blackPlayer) {
+            //console.log('here')
             document.getElementById('colorSelectBlack').classList.add('hidden');
             // document.getElementById('black').classList.add('hidden');
         }
-        if (data[1].whitePlayer && data[1].blackPlayer) {
+        if (data.playerData.whitePlayer && data.playerData.blackPlayer) {
             document.getElementById("username").value = 'spectator';
             color = 2;
             login();
         }
     } else {
-        board = data[0];
+        board = data.board;
         //whiteTurnClock[0] = data[1]
 
-        if (JSON.stringify(prevCaptures) !== JSON.stringify(data[4])) {
-            prevCaptures = data[4];
-            updateCaptures(data[4]);
+        if (JSON.stringify(prevCaptures) !== JSON.stringify(data.captures)) {
+            prevCaptures = data.captures;
+            updateCaptures(data.captures);
         }
-        console.log(data[3]);
-        console.log(!data[3].length);
-        if (!data[3].length) {
-            console.log('here')
-            drawBoard(board, data[1], data[2], data[5], data[6]);
+        console.log(data.updateSquares);
+        console.log(!data.updateSquares.length);
+        if (!data.updateSquares.length) {
+            //console.log('here')
+            
+            drawBoard(board, data.whiteTurn, data.endString, data.recentMove, data.playerData);
         } else {
-            updateBoard(board, data[1], data[2], data[3], data[5]);
+            updateBoard(board, data.whiteTurn, data.endString, data.updateSquares, data.recentMove);
         }
     }
 }
@@ -110,13 +113,14 @@ const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
         }
 
         //last move squares
-        if (lastMove && lastMove.length) {
+        if (lastMove && lastMove[0]) {
+            //console.log('here2')
             for (let k = 0; k < 2; k++) {
-                if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+                if (lastMove[k][0] % 2 != lastMove[k][1] % 2) {
                     ctx.fillStyle = '#709090';
                     ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
                 } else {
-                    ctx.fillStyle = '#9aadad';
+                    ctx.fillStyle = '#94a6a6';
                     ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
                 }
             }
@@ -134,14 +138,14 @@ const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
     ctx.stroke;
 
     //draw pieces
-    for (let i = 0; i < board.length; i++) {
-        for (let j = 0; j < board[i].length; j++) {
-            if (board[i][j]) {
+    for (let file = 0; file < 8; file++) {
+        for (let rank = 0; rank < 8; rank++) {
+            if (board[file * 8 + rank]) {
                 let tempImg = new Image;
-                tempImg.src = "/img/" + board[i][j].image;
+                tempImg.src = "/img/" + getImageFromIndex(board, file * 8 + rank);
                 //console.log(tempImg.src);
                 tempImg.onload = () => {
-                    ctx.drawImage(tempImg, (j * 100) + 7, (i * 100) + 7, 80, 80);
+                    ctx.drawImage(tempImg, (rank * 100) + 7, (file * 100) + 7, 80, 80);
                 }
 
             }
@@ -156,40 +160,43 @@ const updateBoard = (board, whiteTurn, gameResult, updateSquares, lastMove) => {
     //update each update square, including redrawing color, coordinate, and piece image
     const ctx = gameCanvas.getContext('2d');
     for (let i = 0; i < updateSquares.length; i++) {
-        ctx.clearRect(updateSquares[i][0] * 100, updateSquares[i][1] * 100, 100, 100);
-        if (updateSquares[i][0] % 2 != updateSquares[i][1] % 2) {
+        let pos = getXYfromIndex(updateSquares[i]);
+        //console.log(pos.x, pos.y)
+        ctx.clearRect(pos.x * 100, pos.y * 100, 100, 100);
+        if (pos.x % 2 != pos.y % 2) {
             ctx.fillStyle = 'slategray';
-            ctx.fillRect(updateSquares[i][0] * 100, updateSquares[i][1] * 100, 100, 100)
+            ctx.fillRect(pos.x * 100, pos.y * 100, 100, 100)
         }
 
         //last move squares
         if (lastMove && lastMove.length) {
             for (let k = 0; k < 2; k++) {
-                if (lastMove[k][0] % 2 !== lastMove[k][1] % 2) {
+                let pos2 = getXYfromIndex(lastMove[k])
+                if (pos2.x % 2 !== pos2.y % 2) {
                     ctx.fillStyle = '#709090';
-                    ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+                    ctx.fillRect(pos2.x * 100, pos2.y * 100, 100, 100);
                 } else {
                     ctx.fillStyle = '#9aadad';
-                    ctx.fillRect(lastMove[k][0] * 100, lastMove[k][1] * 100, 100, 100);
+                    ctx.fillRect(pos2.x * 100, pos2.y * 100, 100, 100);
                 }
             }
         }
         //
 
         ctx.fillStyle = 'black';
-        if (updateSquares[i][0] == 0) {
-            ctx.fillText(8 - updateSquares[i][1], 5, updateSquares[i][1] * 100 + 25);;
+        if (pos.x == 0) {
+            ctx.fillText(8 - pos.y, 5, pos.y * 100 + 25);;
         }
-        if (updateSquares[i][1] == 7) {
-            ctx.fillText(String.fromCharCode((updateSquares[i][0] + 97)), (updateSquares[i][0] * 100) + 80, 793);
+        if (pos.y == 7) {
+            ctx.fillText(String.fromCharCode((pos.x + 97)), (pos.x * 100) + 80, 793);
         }
         ctx.stroke;
 
-        if (board[updateSquares[i][1]][updateSquares[i][0]]) {
+        if (board[updateSquares[i]]) {
             let tempImg = new Image;
-            tempImg.src = "/img/" + board[updateSquares[i][1]][updateSquares[i][0]].image;
+            tempImg.src = "/img/" + getImageFromIndex(board, updateSquares[i]);
             tempImg.onload = () => {
-                ctx.drawImage(tempImg, (updateSquares[i][0] * 100) + 7, (updateSquares[i][1] * 100) + 7, 80, 80);
+                ctx.drawImage(tempImg, (pos.x * 100) + 7, (pos.y * 100) + 7, 80, 80);
             }
         }
     }
@@ -205,7 +212,7 @@ const updateCaptures = (captures) => {
     ctx2.clearRect(0, 0, captures2.width, captures2.height);
     const drawImage = (ctx, offset, image, i) => {
         image.onload = () => {
-            console.log(offset, image.src);
+            //console.log(offset, image.src);
             ctx.drawImage(image, (i * 15) + offset, 0, 50, 50);
         }
     }
@@ -247,16 +254,16 @@ gameCanvas.addEventListener('mousedown', (event) => {
 
 
     if (!holdingPiece) {
-        piece = Math.floor(mouseX / 100) + "" + (Math.floor(mouseY / 100));
-        console.log(piece);
+        piece = [Math.floor(mouseX / 100), (Math.floor(mouseY / 100))];
+        //console.log(piece);
 
-        if (piece[1] < 8 && piece[1] > -1 && piece[0] < 8 && piece[0] > -1 && board[piece[1]][piece[0]] !== 0) {
+        if (piece[1] < 8 && piece[1] > -1 && piece[0] < 8 && piece[0] > -1 && board[8 * piece[1] + piece[0]]) {
             holdingPiece = !holdingPiece;
         }
     } else {
         holdingPiece = !holdingPiece;
-        let moveTo = Math.floor(mouseX / 100) + "" + (Math.floor(mouseY / 100));
-        console.log("mt" + moveTo);
+        let moveTo = [Math.floor(mouseX / 100), (Math.floor(mouseY / 100))];
+        //console.log("mt" + moveTo);
         if (moveTo[1] < 8 && moveTo[1] > -1 && moveTo[0] < 8 && moveTo[0] > -1) {
             //if (board[piece[1]][piece[0]].isWhite === userIsWhite || userIsWhite === "either") {
             sendMove(piece, moveTo);
@@ -272,28 +279,10 @@ const sendMove = (piece, moveTo) => {
         gameType: 1,
         messageType: 1,
         body: {
-            
-            piece: piece,
-            move: moveTo
+            moveFrom: (8 * piece[1] + piece[0]),
+            moveTo: (8 * moveTo[1] + moveTo[0])
         }
-    }));/*
-    fetch('/move', {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            piece: piece,
-            move: moveTo,
-        })
-    })
-        .then(function (data) {
-            //console.log('Request success: ', data);
-        })
-        .catch(function (error) {
-            console.log('Request failure: ', error);
-        });*/
+    }));
 }
 
 const resetGame = () => {
@@ -301,37 +290,41 @@ const resetGame = () => {
     if (color == 1 || color == 2) {
         ws.send(JSON.stringify({ gameType: 1, messageType: 2, body: {} }));
     }
-    /*fetch('/reset', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/html'
-        },
-        body: '',
-
-    })
-        .then(function (data) {
-            //console.log('Request success: ', data);
-        })
-        .catch(function (error) {
-            console.log('Request failure: ', error);
-        });*/
 }
-/*
-let time1 = 59;
-let time2 = 59;
-setInterval( () => {
-    if (whiteTurnClock[1])
-    whiteTurnClock[0] ? document.getElementById('clock1').innerHTML = time1-- : document.getElementById('clock2').innerHTML = time2--;
-}, 1000);*/
-//kill me
-/*
-if (window.innerHeight > window.innerWidth) {
-    console.log(window.getComputedStyle(document.body).getPropertyValue('margin'));
-    document.getElementById('game').style.width = window.innerWidth - 2 * window.getComputedStyle(document.body).getPropertyValue('margin')[0];;
-    document.getElementById('game').style.height = window.innerWidth - 2 * window.getComputedStyle(document.body).getPropertyValue('margin')[0];;
-} else {
-    document.getElementById('game').style.width = window.innerHeight - (200);
-    document.getElementById('game').style.height = window.innerHeight - (200);
-}
-*/
 
+const getImageFromIndex = (board, index) => {
+    //console.log(`${Math.floor(board[index] / 10) ? "white" : "black"}${getPieceType(board[index])}.png`)
+    return `${Math.floor(board[index] / 10) ? "white" : "black"}`
+        + `${getPieceType(board[index])}.png`
+}
+
+const getPieceType = (piece) => {
+    //console.log(piece)
+    switch (piece % 10) {
+        case 1:
+            return "Pawn";
+            break;
+        case 2:
+            return "Knight";
+            break;
+        case 3:
+            return "Bishop";
+            break;
+        case 4:
+            return "Rook";
+            break;
+        case 5:
+            return "Queen";
+            break;
+        case 6:
+            return "King";
+            break;
+    }
+}
+
+const getXYfromIndex = (index) => {
+    return {
+        "x": index % 8,
+        "y": (Math.floor(index / 8))
+    }
+}

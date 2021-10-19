@@ -2,99 +2,72 @@
 <link rel='stylesheet' type='text/css' href='online.css'>
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
-<body>
-    <div id="parent" class="parent hidden">
-        <div class="div1">
-            <canvas id="gameCanvas" class="board" width="800" height="800"
-                oncontextmenu="event.preventDefault();"></canvas>
-        </div>
 
-        <div class="div2">
+<body>
+    <div class="homeButton">
+        <a href="/">
+            <img class="homeButton" src="img/home.png"></img>
+        </a>
+    </div>
+    <div id="container" class="container hidden">
+        <div class='dummy'></div>
+        <div class="gameArea">
             <div class="userInfo">
                 <div id="userName2" class="userName2">User 2</div>
                 <canvas id="player2captures" class="captures2" width="400" height="50"
                     oncontextmenu="event.preventDefault();"></canvas>
-
             </div>
-        </div>
-        <div class="div3">
+
+            <div class="board">
+                <canvas id="gameCanvas" class="board" width="800" height="800"
+                    oncontextmenu="event.preventDefault();"></canvas>
+            </div>
             <div class="userInfo">
                 <div id="userName1" class="userName1">User 1</div>
                 <canvas id="player1captures" class="captures1" width="400" height="50"
                     oncontextmenu="event.preventDefault();"></canvas>
             </div>
-        </div>
-        <div class="div4">
 
         </div>
-        <div class="div5">
-
-            <div class="gameInfo">
-                <div id="infoP" class="info"></div>
-                <div id="clock2" class="clock">Black Clock
-                </div>
-                <div id="clock1" class="clock">White Clock</div>
-                <div class="endGame">
-                    <button onclick="resetGame()" class="draw">
-                        Offer Draw
-                    </button>
-                    <button onclick="resetGame()" class="resign">
-                        Resign
-                    </button>
-                </div>
-
+        <div class="gameInfo">
+            <div id="infoP" class="info"></div>
+            <div id="clock2" class="clock">Black Clock
             </div>
-        </div>
-        <div class="div6" style="top: 0px; left: 0px;">
-            <div >
-                <a href="/">
-                <img class="homeButton" src="img/home.png"></img>
-            </a>
+            <div id="clock1" class="clock">White Clock</div>
+            <div class="endGame">
+                <button onclick="resetGame()" class="draw">
+                    Offer Draw
+                </button>
+                <button onclick="resetGame()" class="resign">
+                    Resign
+                </button>
             </div>
-            
+
         </div>
+
+
     </div>
-<div class="div6" style="position: absolute;">
-            <div >
-                <a href="/">
-                <img class="homeButton" src="img/home.png"></img>
-            </a>
-            </div>
-            
-        </div>
+    
     <div id="lobbySelect" class="lobbySelect">
         <p>Enter a 3 character string which will act as the code to a lobby.
-        You can input a new code to create a lobby, or input another player's
-        code to join theirs.</p> 
+            You can input a new code to create a lobby, or input another player's
+            code to join theirs.</p>
         <br>
-        <input class="usernameInput" id="lobbyCode" name="lobbyCode" type="text" placeholder="e n t e r   c o d e" maxlength="3"/><br>
-        <br><button class="usernameInput" style="width: 30%" onclick="joinLobby(document.getElementById('lobbyCode').value)">j o i n</button>
-        
-   
+        <input class="usernameInput" id="lobbyCode" name="lobbyCode" type="text" placeholder="e n t e r   c o d e"
+            maxlength="3" /><br>
+        <br><button class="usernameInput" style="width: 30%"
+            onclick="joinLobby(document.getElementById('lobbyCode').value)">j o i n</button>
+
+
     </div>
     <div id="login" class="login hidden">
         <div class="loginInner">
-            <input type="text" class="usernameInput" id="username" name="username" placeholder="e n t e r   u s e r n a m e" /><br>
+            <input type="text" class="usernameInput" id="username" name="username"
+                placeholder="e n t e r   u s e r n a m e" /><br>
             <br>s e l e c t &nbsp;&nbsp;c o l o r<br><br>
             <img class="colorSelect" id="colorSelectWhite" src="img/whitePawn.png" onclick="setColor(0)">
-            <img class="colorSelect" id="colorSelectBlack" src="img/blackInverse/blackPawn.png" onclick="setColor(1)"><br>
-<!--
-            <div id="white"><input type="radio" name="colorSelect" value="white" onclick=>
-                <label for="white">White</label><br>
-            </div>
-            <div id="black">
-                <input type="radio" name="colorSelect" value="black">
-                <label id="black" for="black">Black</label><br>
-            </div>-->
-            <!--
-            <div id="both">
-                <input type="radio" id="both" name="colorSelect" value="both" onclick="setColor(2)">
-                <label id="both" for="both">Both</label><br>
-            </div>
-            <div id="spectator">
-                <input type="radio" id="spectator" name="colorSelect" value="spec" onclick="setColor(3)">
-                <label id="spectator" for="either">Spectator</label><br>
-            </div>-->
+            <img class="colorSelect" id="colorSelectBlack" src="img/blackInverse/blackPawn.png"
+                onclick="setColor(1)"><br>
             <br><button class="usernameInput" style="width: 45%" onclick="login()">s u b m i t</button>
         </div>
     </div>

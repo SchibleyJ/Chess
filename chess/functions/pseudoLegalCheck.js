@@ -1,54 +1,45 @@
-let Queen = require('../pieces/queen.js');
-let getAttacked = require('./getAttacked.js');
+const getAttacking = require('./getAttacking.js');
+const pseudoLegalCheck = (moveFrom, moveTo, oldBoard, whiteTurn, moveType, moveData) => {
 
-const pseudoLegalCheck = (oldBoard, moveResponse, whiteTurn, pieceX, pieceY, moveX, moveY) => {
-    //copy board
-    let board = [];
-    for (let i = 0; i < 8; i++){
-        board.push(Array.from(oldBoard[i]));
+    let board = Array.from(oldBoard);
+    
+    if (!board[moveFrom] || Math.floor(board[moveFrom] / 10) != whiteTurn) {
+        //console.log(board[moveFrom])
+        console.log('here')
+        return false;
+    }
+    //generate all legal moves
+
+    if (moveType == 1){
+        board[moveData] = null;
     }
 
-    // make turn
-
-    board[moveY][moveX] = board[pieceY][pieceX];
-    board[pieceY][pieceX] = 0;
-
-    if (moveResponse[0] == "pawn" && moveY == (whiteTurn ? 0 : 7)) {
-        board[moveY][moveX] = new Queen(whiteTurn);
-    }
-    if (moveResponse[1]) {
-        //console.log(moveX, moveY)
-        //cannot set propety 3 of undefined
-        //console.log(parseInt(moveY) + (whiteTurn ? 1 : -1));
-        board[parseInt(moveY) + (whiteTurn ? 1 : -1)][moveX] = 0;
-    }
-    if (moveResponse[0] == "king") {
-        if (moveResponse[3]) {
-            board[moveResponse[3][3]][moveResponse[3][2]] = board[moveResponse[3][1]][moveResponse[3][0]];
-            board[moveResponse[3][1]][moveResponse[3][0]] = 0;
-        }
+    if (moveType == 2) {
+        board[moveData[0]] = board[moveData[1]]
+        board[moveData[1]] = null;
     }
 
-
-    //turn complete, board ready for test
+    board[moveTo] = board[moveFrom];
+    board[moveFrom] = null;
 
     let getKingPos = () => {
-        for (let i = 0; i < 8; i++) {
-            for (let j = 0; j < 8; j++) {
-                if (board[i][j].piece == "king" && board[i][j].isWhite == whiteTurn) {
-                    return j + "" + i;
-                }
+        for (let i = 0; i < 64; i++) {
+            if (board[i] == 6 + (whiteTurn ? 10 : 0)) {
+                return i;
             }
         }
+
     }
 
-    kingPos = getKingPos();
+    let kingPos = getKingPos();
 
-    //console.log(kingPos);
-
-    let illegalSquares = getAttacked(board, !whiteTurn);
-    //console.log(illegalSquares);
+    let illegalSquares = getAttacking(board, !whiteTurn);
+    //console.log(kingPos)
+    //console.log(illegalSquares)
+    //returns true if position is legal
     return (!illegalSquares.includes(kingPos));
+
 }
+
 
 module.exports = pseudoLegalCheck;

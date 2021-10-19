@@ -2,7 +2,7 @@
 const WebSocket = require('ws');
 const SingleGame = require('./chess/singleGame.js');
 const OnlineGame = require('./chess/onlineGame.js');
-const BotGame = require('./chess/botGame.js');
+//const BotGame = require('./chess/botGame.js');
 const server = require('http').createServer();
 const app = require('./httpServer.js');
 const port = process.env.PORT || 8080;
@@ -29,14 +29,15 @@ wss.on('connection', (client) => {
                         singleGames[client.userData.gameID].create(client);
                         break;
                     case 1:
-                        singleGames[client.userData.gameID].move(message, wss, client);
+                        singleGames[client.userData.gameID].move(message, client);
                         break;
                     case 2:
-                        singleGames[client.userData.gameID].reset(wss, client);
+                        singleGames[client.userData.gameID].reset(client);
                         break;
                 }
                 break;
             //online game
+            
             case 1:
                 switch (message.messageType) {
                     case 0:
@@ -58,6 +59,7 @@ wss.on('connection', (client) => {
                         break;
                 }
             //bot game
+            /*
             case 2:
                 switch (message.messageType) {
                     case 0:
@@ -71,77 +73,11 @@ wss.on('connection', (client) => {
                     case 2:
                         botGames[client.userData.gameID].reset(wss, client);
                         break;
-                }
+                }*/
 
         }
 
     })
-
-
-    /*switch (message.messageType) {
-    
-        case 0:
-            switch (message.body.gameType) {
-                case 0:
-                    soloGames.push(new Game());
-                    client["userData"] = { 'gameType': 0, 'gameID': (soloGames.length - 1) };
-                    soloGames[client.userData.gameID].main(message, wss, client);
-                break;
-                
-                case 1:
-                    if (!onlineGames[message.body.gameID]) {
-                        onlineGames[message.body.gameID] = new Game(message.body.gameID);
-                    }
-                    client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
-                    onlineGames[client.userData.gameID].main(message, wss, client);
-                break;
-    
-                case 2:
-            botGames.push(new Game());
-            client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
-            botGames[client.userData.gameID].main(message, wss, client);
-                    break;
-                }
-        break;
-        case 1:
-    
-    
-    }*/
-
-
-    //}
-    //game(message, wss, client, userData);
-    /*
-    if (message.messageType == 0) {
-        if (message.body.gameType == 0) {
-            //console.log(createGame())
-            soloGames.push(new Game());
-            client["userData"] = { 'gameType': 0, 'gameID': (soloGames.length - 1) };
-            soloGames[client.userData.gameID].main(message, wss, client);
-        }
-        if (message.body.gameType == 1) {
-            if (!onlineGames[message.body.gameID]) {
-                onlineGames[message.body.gameID] = new Game(message.body.gameID);
-            }
-            client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
-            onlineGames[client.userData.gameID].main(message, wss, client);
-        }
-        if (message.body.gameType == 2){
-            botGames.push(new Game());
-            client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1) };
-            botGames[client.userData.gameID].main(message, wss, client);
-        }
-    } else {
-        if (message.body.gameType == 0) {
-            soloGames[client.userData.gameID].main(message, wss, client);
-        }
-        if (message.body.gameType == 1) {
-            onlineGames[client.userData.gameID].main(message, wss, client);
-        }
-    }*/
-
-    //  });
-
     client.on('close', () => {
         if (client.useData && client.userData.gameType == 1 && client.userData.color !== 2) {
             if (client.userData.color == 0) {

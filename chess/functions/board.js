@@ -1,60 +1,47 @@
-let King = require('../pieces/king.js');
-let Queen = require('../pieces/queen.js');
-let Rook = require('../pieces/rook.js');
-let Bishop = require('../pieces/bishop.js');
-let Knight = require('../pieces/knight.js');
-let Pawn = require('../pieces/pawn.js');
 const createBoard = () => {
-    //0 always means a square is empty
-    let board =
-        [           /*a, b, c, d, e, f, g, h*/
-            /*0, 1, 2, 3, 4, 5, 6, 7*/
-    /*8 (0)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*7 (1)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*6 (2)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*5 (3)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*4 (4)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*3 (5)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*2 (6)*/[0, 0, 0, 0, 0, 0, 0, 0],
-    /*1 (7)*/[0, 0, 0, 0, 0, 0, 0, 0],
-        ];
 
-
-
+    // Pawn = 1
+    // Knight = 2
+    // Bishop = 3
+    // Rook = 4
+    // Queen = 5
+    // King = 6
+    // add 10 if white
+    const board = Array(64).fill(0);
+    
     //kings
-    board[7][4] = new King(true);
-    board[0][4] = new King(false);
-
+    board[60] = 16;
+    board[4] = 06;
+    
     //queens
-    board[7][3] = new Queen(true);
-    board[0][3] = new Queen(false);
-
+    board[3] = 05;
+    board[59] = 15;
+    
     //bishops
-    board[7][2] = new Bishop(true);
-    board[7][5] = new Bishop(true);
-    board[0][2] = new Bishop(false);
-    board[0][5] = new Bishop(false);
-
+    board[61] = 13;
+    board[58] = 13;
+    board[5] = 03
+    board[2] = 03;
+    
     //knights
-    board[7][1] = new Knight(true);
-    board[7][6] = new Knight(true);
-    board[0][1] = new Knight(false);
-    board[0][6] = new Knight(false);
-
+    board[62] = 12;
+    board[57] = 12;
+    board[6] = 02;
+    board[1] = 02;
+    
     //rooks
-    board[7][0] = new Rook(true);
-    board[7][7] = new Rook(true);
-    board[0][0] = new Rook(false);
-    board[0][7] = new Rook(false);
-
-    //pawns
-    for (let i = 0; i < 8; i++) {
-        board[6][i] = new Pawn(true);
-        board[1][i] = new Pawn(false);
+    board[63] = 14;
+    board[56] = 14;
+    board[7] = 04;
+    board[0] = 04;
+    
+    //pawns 
+    for (let i = 0; i < 8; i++){
+        board[i + 8] = 01;
+        board[i + 48] = 11;
     }
-    //
-
-    return board;
-}
-
+    
+        return board;
+    }
+    
 module.exports = createBoard;

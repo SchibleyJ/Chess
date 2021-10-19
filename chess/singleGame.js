@@ -55,12 +55,12 @@ class Game {
 
                 //console.log(moveResult.wasEnPassant)
                 if (moveResult.wasEnPassant) {
-                    this.board[moveResult.wasEnPassant] = null;
+                    this.board[moveResult.wasEnPassant] = 0;
                 }
 
                 if (moveResult.wasCastle) {
                     this.board[moveResult.wasCastle[0]] = this.board[moveResult.wasCastle[1]]
-                    this.board[moveResult.wasCastle[1]] = null;
+                    this.board[moveResult.wasCastle[1]] = 0;
                     moveResult.updateSquares = moveResult.updateSquares.concat(moveResult.wasCastle);
                 }
 
@@ -68,7 +68,7 @@ class Game {
                 this.enPassantSquare = moveResult.enPassantSquare;
 
                 this.board[request.body.moveTo] = this.board[request.body.moveFrom];
-                this.board[request.body.moveFrom] = null;
+                this.board[request.body.moveFrom] = 0;
 
                 //game end check
                 let endString = gameEndCheck(this.board, this.whiteTurn, this.enPassantSquare, this.canCastle)

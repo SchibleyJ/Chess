@@ -5,51 +5,31 @@ html, body {
     background-color: #272727;
 }
 
-.parent {
-    display: grid;
-    grid-template-columns: auto auto auto;
-    overflow: hidden;
-    grid-template-rows: auto auto auto;
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
-    width: 100%;
+:root {
+    --info-width: 15vw;
+  }
+
+.container {
     height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content:center;
+    align-items: center;
+
 }
 
-.div1 {
-    grid-area: 2 / 2 / 3 / 3;
-    aspect-ratio: 1;
-    width: 80vmin;
-    margin: auto
+.gameArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
-.div2 {
-    grid-area: 1 / 2 / 2 / 3;
-}
-
-.div3 {
-    grid-area: 3 / 2 / 4 / 3;
-}
-
-.div4 {
-    grid-area: 2 / 1 / 3 / 2;
-    width: 10vw;
-}
-
-.div5 {
-    grid-area: 2 / 3 / 3 / 4;
-    width: 10vw;
-}
-
-.div6 {
-    grid-area: 1 / 1 / 2 / 2;
-}
 
 .board {
-    display: block;
     border: 1px solid black;
-    height: 100%;
-    width: 100%;
+    aspect-ratio: 1;
+    height: 80vh;
     background-color: #d3d3d3;
 }
 
@@ -57,58 +37,36 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
     color: lightgrey;
-    width: 80vmin;
-    margin: auto;
-}
-
-.userName1 {
-    position: relative;
-    top: 1vh;
-}
-
-.userName2 {
-    position: relative;
-    top: 6vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .captures1 {
-    position: relative;
-    bottom: 2vh;
-    float: right;
     width: 66%;
     aspect-ratio: 400/50;
 }
 
 .captures2 {
-    position: relative;
-    top: 0vh;
-    float: right;
     width: 66%;
     aspect-ratio: 400/50;
 }
 
 .gameInfo {
-    width: 80%;
-    position: relative;
-    top: 40%;
-    transform: translateY(-40%);
+    width: var(--info-width);
+    padding: 5px;
+}
+
+.dummy{
+    padding: 5px;
+    width: var(--info-width);
 }
 
 .endGame {
-    width: 50%;
-    display: inline;
-    height: 20px;
+    
 }
 
-.draw {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 20px;
-    color: lightgrey;
-    background-color: #333333;
-    width: 50%;
-    height: 10%;
-    margin: 0 auto;
-}
+
 
 .resign {
     font-family: Arial, Helvetica, sans-serif;
@@ -136,80 +94,11 @@ html, body {
     font-size: 20px;
     color: lightgrey;
     margin: 10px 0px;
-}
-
-.colorSelectDiv {
-    color: lightgrey;
-    padding: 2%;
-    height: 10vh;
-}
-
-.login {
-    width: 20vw;
-    min-width: 300px;
-    min-height: 340px;
-    height: 30vh;
-    background-color: #202020;
-    width: fit-content;
-    margin: auto;
-    margin-top: 20vh;
-    padding: 3vh;
-    color: lightgrey;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 200;
-    border-radius: 5%;
-}
-
-.colorSelect {
-    margin: 2px;
-    width: 20%;
-}
-
-.colorSelectOutline {
-    border: 2px solid lightgray;
-    margin: 0px;
-    width: 20%;
-    border-radius: 5%;
-
-}
-
-.usernameInput {
-    font-size: 20px;
-    width: 75%;
-    height: 40px;
-    margin: 20px;
-    background-color: lightgray;
-    text-align: center;
-    font-weight: 200;
-    border-radius: 5%;
-}
-
-.lobbySelect{
-    background-color: #202020;
-    margin: auto;
-    margin-top: 20vh;
-    padding: 3vh;
-    width: 20vw;
-    height: 40vh;
-    min-width: 400px;
-    min-height: 385px;
-    color: lightgrey;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 200;
-    border-radius: 5%;
-}
-
-.hidden {
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
+    padding: 2px;
 }
 
 .homeButton {
+    position: absolute;
     padding: 10px;
     aspect-ratio: 1;
     width: 50px;

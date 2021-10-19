@@ -2,7 +2,7 @@
 const WebSocket = require('ws');
 const SingleGame = require('./chess/singleGame.js');
 const OnlineGame = require('./chess/onlineGame.js');
-//const BotGame = require('./chess/botGame.js');
+const BotGame = require('./chess/botGame.js');
 const server = require('http').createServer();
 const app = require('./httpServer.js');
 const port = process.env.PORT || 8080;
@@ -59,21 +59,21 @@ wss.on('connection', (client) => {
                         break;
                 }
             //bot game
-            /*
+           
             case 2:
                 switch (message.messageType) {
                     case 0:
                         botGames.push(new BotGame());
-                        client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1), color: message.body.color };
+                        client["userData"] = { 'gameType': 2, 'gameID': (botGames.length - 1), color: message.body.color, 'name': 'You' };
                         botGames[client.userData.gameID].create(client);
                         break;
                     case 1:
                         botGames[client.userData.gameID].move(message, client, false);
                         break;
                     case 2:
-                        botGames[client.userData.gameID].reset(wss, client);
+                        botGames[client.userData.gameID].reset(client);
                         break;
-                }*/
+                }
 
         }
 

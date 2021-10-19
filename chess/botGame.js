@@ -1,5 +1,6 @@
-const makeMove = require('./functions/makeMove.js');
 const createBoard = require('./functions/board.js');
+const makeMove = require('./functions/makeMove.js');
+const gameEndCheck = require('./functions/gameEndCheck.js');
 const http = require('http');
 
 class Game {
@@ -8,9 +9,9 @@ class Game {
         this.makeMove = makeMove;
         this.board = this.createBoard();
         this.whiteTurn = true;
-        this.enPassantSquare = [];
-        this.canCastle = [true, true, true, true];
-        this.lastMove = [];
+        this.enPassantSquare = null;
+        this.canCastle = [true, true, true, true]; //maybe change this to be indexes
+        this.lastMove = [null, null];
         this.captures = {
             white: {
                 Pawn: 0,
@@ -26,6 +27,7 @@ class Game {
                 Rook: 0,
                 Queen: 0
             }
+
         }
         this.playerData = {
             whitePlayer: undefined,
@@ -34,72 +36,76 @@ class Game {
         this.gameID = newID;
     }
 
-    //when sending data to front end, data should be formatted as:
-    //[board, whiteTurn, endString, updateSquares, captures, recentMove, loginInfo]
-    //endString comes from the result of makeMove and is result[1]
-    //updateSquares comes from the result of makeMove and is result[2]
-    //captures is the captures object in this file which stores the pieces captured by both players
-
     create = (client) => {
-        if (client.userData.color) {
-            this.playerData.blackPlayer = client;
-        } else {
+        if (client.userData.color == 0) {
             this.playerData.whitePlayer = client;
+            this.playerData.blackPlayer = { 'userData': { 'color': 1, 'name': 'SkibBot' } }
+        } else {
+            this.playerData.blackPlayer = client;
+            this.playerData.whitePlayer = { 'userData': { 'color': 0, 'name': 'SkibBot' } }
         }
-        client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures]));
+        //console.log('here')
+        client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": "", "updateSquares": [], "recentMove": this.lastMove, "captures": this.captures, 'playerData': { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name } }));
     }
 
+    move = (request, client, botMove) => {
+        //console.log(request)
+        //if (this.whiteTurn === (client.userData.color == 0)) {
+        if (this.whiteTurn == (client.userData.color == 0)
+            || botMove) {
+            console.log('here')
+            console.log(request.body)
+            let moveResult = this.makeMove(request.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
+            if (moveResult) {
+                if (moveResult.piece) {
+                    this.captures[this.whiteTurn ? "black" : "white"][this.#getPieceType(moveResult.piece)]++;
+                    //console.log(this.captures)
+                }
+                if (this.lastMove[0])
+                    moveResult.updateSquares = moveResult.updateSquares.concat(this.lastMove);
+                this.lastMove = [request.body.moveFrom, request.body.moveTo];
 
-    move = (message, client, isCompMove) => {
-        if ((this.whiteTurn && client.userData.color == 0 ||
-            (!this.whiteTurn && client.userData.color == 1) ||
-            isCompMove)) {
-
-            let result = this.makeMove(message.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
-
-                if (isCompMove){
-                    console.log(message.body, result)
+                //console.log(moveResult.wasEnPassant)
+                if (moveResult.wasEnPassant) {
+                    this.board[moveResult.wasEnPassant] = 0;
                 }
 
-            //update captures object
-            if (result[0]) {
-                if (result[3]) {
-                    this.captures[this.whiteTurn ? 'white' : 'black'][result[3]]++;
+                if (moveResult.wasCastle) {
+                    this.board[moveResult.wasCastle[0]] = this.board[moveResult.wasCastle[1]]
+                    this.board[moveResult.wasCastle[1]] = 0;
+                    moveResult.updateSquares = moveResult.updateSquares.concat(moveResult.wasCastle);
                 }
-
-                if (this.lastMove.length) {
-                    result[2].push(this.lastMove[0], this.lastMove[1]);
-                }
-
-                this.lastMove = result[4];
 
                 this.whiteTurn = !this.whiteTurn;
-                this.enPassantSquare = result[0];
-                client.send(JSON.stringify([this.board, this.whiteTurn, result[1], result[2], this.captures, this.lastMove]));
+                this.enPassantSquare = moveResult.enPassantSquare;
 
+                this.board[request.body.moveTo] = this.board[request.body.moveFrom];
+                this.board[request.body.moveFrom] = 0;
 
-                //send human move to computer
-                if (!isCompMove) {
-                    this.sendBoard(this.getGameState())
-                        .then((computerMove) => {
-                            //console.log(computerMove);
-                            //this.move({ body: { piece: '41', move: '43' } }, client, true)
-                        });
+                //game end check
+                let endString = gameEndCheck(this.board, this.whiteTurn, this.enPassantSquare, this.canCastle)
+                client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": endString, "updateSquares": moveResult.updateSquares, "recentMove": this.lastMove, "captures": this.captures }));
+
+                if (this.whiteTurn != client.userData.color == 0) {
+                    this.#sendGame(this.board, this.whiteTurn, this.enPassantSquare, this.canCastle).then(res => {
+                        console.log(res);
+                        res = JSON.parse(res);
+                        this.move({ 'body': { 'moveFrom': res[0], 'moveTo': res[1] } }, client, true);
+                    });
                 }
+
             }
-
-
-
         }
+
     }
 
+    reset = (client) => {
 
-    reset = (wss, client) => {
         this.board = this.createBoard();
         this.whiteTurn = true;
-        this.enPassantSquare = [];
-        this.canCastle = [true, true, true, true];
-        this.lastMove = [];
+        this.enPassantSquare = null;
+        this.canCastle = [true, true, true, true]; //maybe change this to be indexes
+        this.lastMove = [null, null];
         this.captures = {
             white: {
                 Pawn: 0,
@@ -115,33 +121,43 @@ class Game {
                 Rook: 0,
                 Queen: 0
             }
+
         }
-        client.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove]));
+        client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": "", "updateSquares": [], "recentMove": this.lastMove, "captures": this.captures }));
+        //client.send(JSON.stringify({ "board": 'test' }));
     }
 
+    #getPieceType = (piece) => {
+        switch (piece % 10) {
+            case 1:
+                return "Pawn";
+                break;
+            case 2:
+                return "Knight";
+                break;
+            case 3:
+                return "Bishop";
+                break;
+            case 4:
+                return "Rook";
+                break;
+            case 5:
+                return "Queen";
+                break;
 
-    reloadBoard = (wss, color) => {
-        wss.clients.forEach(client_ => {
-            if (client_.userData.gameID == this.gameID && client_.userData.color !== color) {
-                //console.log(client.userData.name)
-                console.log(this.playerData)
-                client_.send(JSON.stringify([this.board, this.whiteTurn, "", [], this.captures, this.lastMove, { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name }]));
-            }
-        });
-    }
-
-    getGameState = () => {
-        return {
-            board: this.board,
-            castling: this.canCastle,
-            enPassant: this.enPassantSquare,
-            whiteTurn: this.whiteTurn
         }
     }
 
-    sendBoard = (game) => {
+    #sendGame(board, whiteTurn, enPassantSquare, canCastle) {
         return new Promise((resolve, reject) => {
-            let data = JSON.stringify(game);
+            let data = JSON.stringify(
+                {
+                    'board': board,
+                    'whiteTurn': whiteTurn,
+                    'enPassantSquare': enPassantSquare,
+                    'canCastle': canCastle
+                }
+            );
             const options = {
                 hostname: 'localhost',
                 port: 8081,
@@ -173,6 +189,7 @@ class Game {
             req.write(data)
             req.end()
         });
+
     }
 
 }

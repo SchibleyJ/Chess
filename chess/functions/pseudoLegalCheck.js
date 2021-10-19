@@ -11,16 +11,16 @@ const pseudoLegalCheck = (moveFrom, moveTo, oldBoard, whiteTurn, moveType, moveD
     //generate all legal moves
 
     if (moveType == 1){
-        board[moveData] = null;
+        board[moveData] = 0;
     }
 
     if (moveType == 2) {
         board[moveData[0]] = board[moveData[1]]
-        board[moveData[1]] = null;
+        board[moveData[1]] = 0;
     }
 
     board[moveTo] = board[moveFrom];
-    board[moveFrom] = null;
+    board[moveFrom] = 0;
 
     let getKingPos = () => {
         for (let i = 0; i < 64; i++) {

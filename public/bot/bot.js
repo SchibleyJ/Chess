@@ -26,7 +26,7 @@ ws.onmessage = (e) => {
         updateCaptures(data.captures);
     }
     //console.log(!data[3].length);
-    if (!data.recentMove[0]) {
+    if (!data.updateSquares.length) {
         console.log('here1')
         drawBoard(board, data.whiteTurn, data.endString, data.recentMove, data.playerData);
     } else {
@@ -39,13 +39,13 @@ ws.onmessage = (e) => {
 
 const drawBoard = (board, whiteTurn, gameResult, lastMove, names) => {
 console.log(names)
-    if (names.whitePlayer) {
+    if (names?.whitePlayer) {
 
         document.getElementById('userName1').innerHTML = names?.whitePlayer;
     } else {
         document.getElementById('userName1').innerHTML = "Player 1";
     }
-    if (names.blackPlayer) {
+    if (names?.blackPlayer) {
         document.getElementById('userName2').innerHTML = names?.blackPlayer;
     } else {
         document.getElementById('userName2').innerHTML = "Player 2";

@@ -26,7 +26,7 @@ ws.onmessage = (e) => {
         updateCaptures(data.captures);
     }
     //console.log(!data[3].length);
-    if (!data.recentMove[0]) {
+    if (!data.updateSquares.length) {
         console.log('here1')
         drawBoard(board, data.whiteTurn, data.endString, data.recentMove);
     } else {

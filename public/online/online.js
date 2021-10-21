@@ -39,7 +39,7 @@ const joinLobby = (code) => {
     //console.log(code);
     document.getElementById('lobbySelect').classList.add('hidden');
     document.getElementById('login').classList.remove('hidden');
-
+    console.log('here')
     ws.send(JSON.stringify({ gameType: 1, messageType: 0, body: {gameID: code } }));
 
 }

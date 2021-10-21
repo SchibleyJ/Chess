@@ -46,6 +46,9 @@ wss.on('connection', (client) => {
                         }
                         client["userData"] = { 'gameType': 1, 'gameID': message.body.gameID };
                         onlineGames[client.userData.gameID].create(client);
+                        console.log(client.userData.gameID)
+                        console.log(onlineGames)
+                        console.log(onlineGames[client.userData.gameID])
                         break;
                     case 1:
                         onlineGames[client.userData.gameID].move(message, wss, client);
@@ -53,14 +56,19 @@ wss.on('connection', (client) => {
                     case 2:
                         onlineGames[client.userData.gameID].reset(wss, client);
                         break;
-
                     case 3:
+                        console.log(onlineGames)
+                        console.log(client.userData)
+
                         onlineGames[client.userData.gameID].login(message, wss, client);
                         break;
                 }
+                break;
             //bot game
            
             case 2:
+                console.log('here')
+                console.log(message)
                 switch (message.messageType) {
                     case 0:
                         botGames.push(new BotGame());
@@ -73,7 +81,7 @@ wss.on('connection', (client) => {
                     case 2:
                         botGames[client.userData.gameID].reset(client);
                         break;
-                }
+                       }
 
         }
 

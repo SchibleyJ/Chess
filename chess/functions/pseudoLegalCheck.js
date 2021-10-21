@@ -21,6 +21,12 @@ const pseudoLegalCheck = (moveFrom, moveTo, oldBoard, whiteTurn, moveType, moveD
 
     board[moveTo] = board[moveFrom];
     board[moveFrom] = 0;
+    
+    if (board[moveTo] % 10 == 1){
+        if (moveTo < 8 || moveTo > 55){
+            board[moveTo] = board[moveTo] + 4;
+        }
+    }
 
     let getKingPos = () => {
         for (let i = 0; i < 64; i++) {

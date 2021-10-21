@@ -14,7 +14,7 @@ const pieceMoves = (board, whiteTurn, pieceIndex, enPassant, castling) => {
     let distancesToBoardEdges = getDistancesToBoardEdges(board, pieceIndex);
     switch (board[pieceIndex] % 10) {
         case 1:
-            return pawnMoves(board, pieceIndex, distancesToBoardEdges, enPassant);
+            return pawnMoves(board, pieceIndex, distancesToBoardEdges, enPassant, whiteTurn);
             break;
         case 2:
             return knightMoves(board, pieceIndex, distancesToBoardEdges);
@@ -54,7 +54,7 @@ const getDistancesToBoardEdges = (board, pieceIndex) => {
 }
 
 
-const pawnMoves = (board, pieceIndex, distancesToBoardEdges, enPassant) => {
+const pawnMoves = (board, pieceIndex, distancesToBoardEdges, enPassant, whiteTurn) => {
     let moves = [];
     let color = (getColor(board, pieceIndex) ? -1 : 1);
     if (!board[pieceIndex + (8 * color)]) {

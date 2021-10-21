@@ -74,6 +74,11 @@ class Game {
                 this.board[request.body.moveTo] = this.board[request.body.moveFrom];
                 this.board[request.body.moveFrom] = 0;
 
+                if (this.board[request.body.moveTo] % 10 == 1){
+                    if (request.body.moveTo < 8 || request.body.moveTo > 55){
+                        this.board[request.body.moveTo] = this.board[request.body.moveTo] + 4;
+                    }
+                }
                 //game end check
                 this.endString = gameEndCheck(this.board, this.whiteTurn, this.enPassantSquare, this.canCastle)
 

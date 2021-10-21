@@ -53,7 +53,7 @@ class Game {
         //if (this.whiteTurn === (client.userData.color == 0)) {
         if (this.whiteTurn == (client.userData.color == 0)
             || botMove) {
-            console.log('here')
+            //console.log('here')
             console.log(request.body)
             let moveResult = this.makeMove(request.body, this.board, this.whiteTurn, this.enPassantSquare, this.canCastle);
             if (moveResult) {
@@ -82,8 +82,15 @@ class Game {
                 this.board[request.body.moveTo] = this.board[request.body.moveFrom];
                 this.board[request.body.moveFrom] = 0;
 
+                if (this.board[request.body.moveTo] % 10 == 1){
+                    if (request.body.moveTo < 8 || request.body.moveTo > 55){
+                        this.board[request.body.moveTo] = this.board[request.body.moveTo] + 4;
+                    }
+                }
+                
                 //game end check
                 let endString = gameEndCheck(this.board, this.whiteTurn, this.enPassantSquare, this.canCastle)
+                console.log({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": endString, "updateSquares": moveResult.updateSquares, "recentMove": this.lastMove, "captures": this.captures })
                 client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": endString, "updateSquares": moveResult.updateSquares, "recentMove": this.lastMove, "captures": this.captures }));
 
                 if (this.whiteTurn != client.userData.color == 0) {
@@ -123,7 +130,7 @@ class Game {
             }
 
         }
-        client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": "", "updateSquares": [], "recentMove": this.lastMove, "captures": this.captures }));
+        client.send(JSON.stringify({ "board": this.board, "whiteTurn": this.whiteTurn, "endString": "", "updateSquares": [], "recentMove": this.lastMove, "captures": this.captures, 'playerData': { whitePlayer: this.playerData.whitePlayer?.userData?.name, blackPlayer: this.playerData.blackPlayer?.userData?.name } }));
         //client.send(JSON.stringify({ "board": 'test' }));
     }
 
